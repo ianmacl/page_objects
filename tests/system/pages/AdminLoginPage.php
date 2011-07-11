@@ -1,13 +1,11 @@
 <?php
 
-require_once 'includes/SeleniumConnection.php';
-
 class AdminLoginPage extends BasePage
 {
 
 	private $locators = array(
-		"username" => "username",
-		"password" => "passwd",
+		"username" => "mod-login-username",
+		"password" => "mod-login-password",
 		"submit_button" => "link=Log in",
 		"error_message" => "css=#system-message li"
 	);
@@ -19,7 +17,9 @@ class AdminLoginPage extends BasePage
 			// cases can be stacked so all the 'text' ones here
 			case "username":
 			case "password":
-				$this->selenium->type($this->locators[$property], $value);
+				$element = $this->driver->get_element($this->locators[$property]);
+				$element->clear();
+				$element->send_keys($value);
 				break;
 			// if there were other types of elements like checks and selects
 			// there would be another stack of cases here
@@ -33,7 +33,7 @@ class AdminLoginPage extends BasePage
 		switch ($property)
 		{
 			case 'error_message':
-				return $this->selenium->getText($this->locators[$property]);
+				return $this->driver->get_element($this->locators[$property])->get_text();
 			default:
 				return $this->$property;
 		}
@@ -46,8 +46,7 @@ class AdminLoginPage extends BasePage
 
 	function open_default_base_url()
 	{
-		global $site;
-		$this->selenium->open(SiteSettings::$url . 'administrator');
+		$this->driver->load(SiteSettings::$url . 'administrator');
 	}
 
 	function login_success($username = null, $password = null)
@@ -59,8 +58,7 @@ class AdminLoginPage extends BasePage
 		$this->username = $username;
 		$this->password = $password;
 		
-		$this->selenium->click($this->locators['submit_button']);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
+		$this->driver->get_element($this->locators['submit_button'])->click();
 		$controlPanelPage = new ControlPanelPage();
 		$controlPanelPage->wait_until_loaded();
 		return $controlPanelPage;
@@ -68,8 +66,8 @@ class AdminLoginPage extends BasePage
 
 	function login_failed()
 	{
-		$this->selenium->click($this->locators['submit_button']);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
+		$this->driver->get_element($this->locators['submit_button'])->click();
+		$this->wait_until_loaded();
 		return $this;
 	}
 

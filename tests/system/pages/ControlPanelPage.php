@@ -1,13 +1,10 @@
 <?php
 
-require_once 'pages/BasePage.php';
-require_once 'includes/SeleniumConnection.php';
-
 class ControlPanelPage extends BasePage
 {
 
 	private $locators = array(
-		"menu" => "menu",
+		'menu' => 'link=Site',
 		'logout_button' => 'link=Log out',
 	);
 	
@@ -22,7 +19,9 @@ class ControlPanelPage extends BasePage
 			// cases can be stacked so all the 'text' ones here
 			case "username":
 			case "password":
-				$this->selenium->type($this->locators[$property], $value);
+				$element = $this->driver->get_element($this->locators[$property]);
+				$element->clear();
+				$element->send_keys($value);
 				break;
 			// if there were other types of elements like checks and selects
 			// there would be another stack of cases here
@@ -36,7 +35,7 @@ class ControlPanelPage extends BasePage
 		switch ($property)
 		{
 			case 'menu':
-				return $this->selenium->getText($this->locators[$property]);
+				return $this->driver->get_element($this->locators[$property])->get_text();
 			default:
 				return $this->$property;
 		}
@@ -49,8 +48,7 @@ class ControlPanelPage extends BasePage
 
 	public function open_from_menu($page)
 	{
-		$this->selenium->click($this->menuOptions[$page]);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
+		$this->driver->get_element($this->menuOptions[$page])->click();
 		$resultPage = new $page;
 		$resultPage->wait_until_loaded();
 		return $resultPage;
@@ -58,8 +56,7 @@ class ControlPanelPage extends BasePage
 	
 	public function open_user_manager()
 	{
-		$this->selenium->click($this->locators['user_manager_button']);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
+		$this->driver->get_element($this->locators['user_manager_button'])->click();
 		$userManagerPage = new UserManagerPage();
 		$userManagerPage->wait_until_loaded();
 		return $userManagerPage;
@@ -67,8 +64,7 @@ class ControlPanelPage extends BasePage
 
 	public function logout()
 	{
-		$this->selenium->click($this->locators['logout_button']);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
+		$this->driver->get_element($this->locators['logout_button'])->click();
 		$adminLoginPage = new AdminLoginPage();
 		$adminLoginPage->wait_until_loaded();
 		return $adminLoginPage;

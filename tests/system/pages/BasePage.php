@@ -1,5 +1,7 @@
 <?php
 
+require_once 'includes/WebDriverConnection.php';
+
 class BasePage
 {
 
@@ -9,20 +11,20 @@ class BasePage
 
 	function __construct()
 	{
-		$this->selenium = SeleniumConnection::getInstance()->selenium;
+		$this->driver = WebDriverConnection::getInstance()->driver;
 	}
 
 	public function waitForElementAvailable($element)
 	{
 		for ($second = 0;; $second++)
 		{
-			if ($second >= 60)
+			if ($second >= 5)
 			{
 				throw new Exception("timeout for element " . $element . " present");
 			}
 			try
 			{
-				if ($this->selenium->isElementPresent($element))
+				if ($this->driver->is_element_present($element))
 					break;
 			} catch (Exception $e)
 			{
@@ -32,11 +34,11 @@ class BasePage
 		}
 		for ($second;; $second++)
 		{
-			if ($second >= 60)
+			if ($second >= 5)
 				throw new Exception("timeout for element " . $element . " visibility");
 			try
 			{
-				if ($this->selenium->isVisible($element))
+				if ($this->driver->get_element($element)->is_visible())
 					break;
 			} catch (Exception $e)
 			{

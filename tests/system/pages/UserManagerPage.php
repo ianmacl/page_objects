@@ -1,8 +1,5 @@
 <?php
 
-require_once 'pages/BasePage.php';
-require_once 'includes/SeleniumConnection.php';
-
 class UserManagerPage extends BasePage
 {
 
@@ -21,7 +18,9 @@ class UserManagerPage extends BasePage
 		{
 			// cases can be stacked so all the 'text' ones here
 			case 'filter_search':
-				$this->selenium->type($this->locators[$property], $value);
+				$element = $this->driver->get_element($this->locators[$property]);
+				$element->clear();
+				$element->send_keys($value);
 				break;
 			// if there were other types of elements like checks and selects
 			// there would be another stack of cases here
@@ -35,7 +34,7 @@ class UserManagerPage extends BasePage
 		switch ($property)
 		{
 			case 'page_title':
-				return $this->selenium->getText($this->locators[$property]);
+				return $this->driver->get_element($this->locators[$property])->get_text();
 			default:
 				return $this->$property;
 		}
@@ -50,31 +49,30 @@ class UserManagerPage extends BasePage
 	{
 		$this->search_user($username);
 		$this->toggle_checkbox(0);
-		$this->selenium->click($this->locators['delete_button']);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
+		$this->driver->get_element($this->locators['delete_button'])->click();
+		$this->wait_until_loaded();
 		return $this;
 	}
 
 	public function toggle_checkbox($number)
 	{
-		$this->selenium->click($this->locators['checkbox'].$number);
+		$this->driver->get_element($this->locators['checkbox'].$number)->click();
 		return $this;
 	}
 	
 	public function search_user($username)
 	{
 		$this->filter_search = $username;
-		$this->selenium->click($this->locators['search_button']);
+		$this->driver->get_element($this->locators['search_button'])->click();
 		sleep(13);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
 		$this->wait_until_loaded();
+
 		return $this;
 	}
 	
 	public function new_user()
 	{
-		$this->selenium->click($this->locators['new_user_button']);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
+		$this->driver->get_element($this->locators['new_user_button'])->click();
 		$userEditPage = new UserEditPage();
 		$userEditPage->wait_until_loaded();
 		return $userEditPage;

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'includes/SeleniumConnection.php';
-
 class UserEditPage extends BasePage
 {
 
@@ -25,7 +23,9 @@ class UserEditPage extends BasePage
 			case 'password':
 			case 'password2':
 			case 'email':
-				$this->selenium->type($this->locators[$property], $value);
+				$element = $this->driver->get_element($this->locators[$property]);
+				$element->clear();
+				$element->send_keys($value);
 				break;
 			// if there were other types of elements like checks and selects
 			// there would be another stack of cases here
@@ -40,7 +40,7 @@ class UserEditPage extends BasePage
 		switch ($property)
 		{
 			case 'page_title':
-				return $this->selenium->getText($this->locators[$property]);
+				return $this->driver->get_element($this->locators[$property])->get_text();
 			default:
 				return $this->$property;
 		}
@@ -53,8 +53,7 @@ class UserEditPage extends BasePage
 
 	public function save_and_close_success()
 	{
-		$this->selenium->click($this->locators['save_and_close_button']);
-		$this->selenium->waitForPageToLoad(parent::$string_timeout);
+		$this->driver->get_element($this->locators['save_and_close_button'])->click();
 		$userManagerPage = new UserManagerPage();
 		$userManagerPage->wait_until_loaded();
 		return $userManagerPage;
