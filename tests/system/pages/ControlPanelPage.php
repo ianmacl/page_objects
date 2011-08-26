@@ -9,7 +9,8 @@ class ControlPanelPage extends BasePage
 	);
 	
 	private $menuOptions = array(
-		'UserManagerPage' => 'link=User Manager'
+		'UserManagerPage' => array('link=Users', 'link=User Manager'),
+		'MyProfilePage' => array('link=Site', 'link=My Profile')
 	);
 	
 	function __set($property, $value)
@@ -48,7 +49,18 @@ class ControlPanelPage extends BasePage
 
 	public function open_from_menu($page)
 	{
-		$this->driver->get_element($this->menuOptions[$page])->click();
+		$menuOption = $this->menuOptions[$page];
+		print_r($menuOption);
+		$this->driver->get_element($menuOption[0])->hover();
+		sleep(3);
+		//echo $menuOption[0]; die();
+		if (count($menuOption) == 2) {
+			$this->driver->get_element($menuOption[1])->click();
+			echo $menuOption[1];
+		} else {
+			$this->driver->get_element($menuOption[1])->hover();
+			$this->driver->get_element($menuOption[2])->click();
+		}
 		$resultPage = new $page;
 		$resultPage->wait_until_loaded();
 		return $resultPage;

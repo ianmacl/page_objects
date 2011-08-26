@@ -4,8 +4,8 @@ class AdminLoginPage extends BasePage
 {
 
 	private $locators = array(
-		"username" => "mod-login-username",
-		"password" => "mod-login-password",
+		"username" => "name=username",
+		"password" => "name=passwd",
 		"submit_button" => "link=Log in",
 		"error_message" => "css=#system-message li"
 	);
@@ -47,6 +47,8 @@ class AdminLoginPage extends BasePage
 	function open_default_base_url()
 	{
 		$this->driver->load(SiteSettings::$url . 'administrator');
+		//$this->driver->load('http://google.com');
+		//$element = $this->driver->get_element('tag name=div');
 	}
 
 	function login_success($username = null, $password = null)

@@ -21,9 +21,12 @@ class UserManagerTest extends JoomlaTestCase
 		{
 			$landing = new AdminLoginPage();
 			$landing->open_default_base_url();
+
+
 			$control = $landing->login_success();
 			$control->wait_until_loaded();
 			$user_manager = $control->open_from_menu('UserManagerPage');
+
 			$user_edit_page = $user_manager->new_user();
 			$user_edit_page->name = 'testuser';
 			$user_edit_page->username = 'testusername';
@@ -32,6 +35,7 @@ class UserManagerTest extends JoomlaTestCase
 			$user_edit_page->email = 'testemail@example.com';
 			$user_manager = $user_edit_page->save_and_close_success();
 			$user_manager->delete_user('testuser');
+
 		}
 		catch (Exception $e)
 		{

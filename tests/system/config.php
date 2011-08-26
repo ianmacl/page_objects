@@ -9,7 +9,7 @@ class SiteSettings
 
 class SeleniumSettings
 {
-	public static $browser = '*googlechrome';
+	public static $browser = 'firefox';
 	public static $host = '127.0.0.1';
 	public static $port = 4444;
 }
